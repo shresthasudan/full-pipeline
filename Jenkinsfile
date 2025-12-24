@@ -114,51 +114,30 @@ pipeline {
         // stage('Sign Image (Cosign)') {
         //     when { expression { params.ACTION == 'Deploy New Version' } }
         //     steps {
-        //         withCredentials([file(credentialsId: 'cosign-key', variable: 'COSIGN_KEY_FILE'), usernamePassword(credentialsId: "${NEXUS_CRED}", usernameVariable: 'NEXUS_USER', passwordVariable: 'NEXUS_PASS')]) {
-        //             script {
-        //                 echo "--- Signing Image in Nexus ---"
-        //                 // 1. Login Cosign to Nexus (Required to attach signature)
-        //                 sh "cosign login ${NEXUS_REGISTRY} -u ${NEXUS_USER} -p ${NEXUS_PASS}"
-                        
-        //                 // 2. Sign the remote image
-        //                 sh """
-        //                    cosign sign --key ${COSIGN_KEY_FILE} \
-        //                    --tlog-upload=false \
-        //                    -y \
-        //                    ${NEXUS_REGISTRY}/${IMAGE_NAME}:${params.VERSION_TAG}
-        //                 """
-        //             }
+        //         withCredentials([
+        //             file(credentialsId: 'cosign-private-key', variable: 'COSIGN_KEY_FILE'),
+        //             usernamePassword(credentialsId: "${NEXUS_CRED}", usernameVariable: 'NEXUS_USER', passwordVariable: 'NEXUS_PASS')
+        //         ]) {
+        //             sh '''
+        //             #!/bin/bash
+
+        //             echo "--- Debug Info ---"
+        //             whoami
+        //             which cosign || true
+        //             cosign version || true
+
+        //             echo "--- Logging into Nexus ---"
+        //             cosign login ${NEXUS_REGISTRY} -u ${NEXUS_USER} -p ${NEXUS_PASS}
+
+        //             echo "--- Signing Image ---"
+        //             cosign sign --key ${COSIGN_KEY_FILE} \
+        //                 --allow-insecure-registry \
+        //                 -y \
+        //                 ${NEXUS_REGISTRY}/${IMAGE_NAME}:${VERSION_TAG}
+        //             '''
         //         }
         //     }
         // }
-
-        stage('Sign Image (Cosign)') {
-            when { expression { params.ACTION == 'Deploy New Version' } }
-            steps {
-                withCredentials([
-                    file(credentialsId: 'cosign-private-key', variable: 'COSIGN_KEY_FILE'),
-                    usernamePassword(credentialsId: "${NEXUS_CRED}", usernameVariable: 'NEXUS_USER', passwordVariable: 'NEXUS_PASS')
-                ]) {
-                    sh '''
-                    #!/bin/bash
-
-                    echo "--- Debug Info ---"
-                    whoami
-                    which cosign || true
-                    cosign version || true
-
-                    echo "--- Logging into Nexus ---"
-                    cosign login ${NEXUS_REGISTRY} -u ${NEXUS_USER} -p ${NEXUS_PASS}
-
-                    echo "--- Signing Image ---"
-                    cosign sign --key ${COSIGN_KEY_FILE} \
-                        --allow-insecure-registry \
-                        -y \
-                        ${NEXUS_REGISTRY}/${IMAGE_NAME}:${VERSION_TAG}
-                    '''
-                }
-            }
-        }
 
 
         stage('Deploy to Environment') {

@@ -190,7 +190,7 @@ pipeline {
                         docker run --rm \
                         -v $WORKSPACE:/zap/wrk:rw \
                         --network host \
-                        -u $(id -u):$(id -g) \
+                        -u 1002:1002 \
                         -e ZAP_HOME=/zap/wrk \
                         zaproxy/zap-stable \
                         zap-baseline.py \

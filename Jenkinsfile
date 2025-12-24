@@ -27,15 +27,18 @@ pipeline {
         stage('Install Dependencies & Test') {
             steps {
                 script {
-                    echo "--- Installing Dependencies (Local for Analysis) ---"
-                    // We need to run tests LOCALLY (not in docker yet) to generate 
-                    // the coverage.xml file for SonarQube to read.
-                    // Ideally use a virtualenv, but for lab simplicity:
-                    sh 'pip install -r requirements.txt'
+                    echo "--- Setting up Virtual Environment ---"
+                    // 1. Create the venv folder
+                    sh 'python3 -m venv venv'
+                    
+                    echo "--- Installing Dependencies (Inside Venv) ---"
+                    // 2. Install requirements using the pip INSIDE the venv
+                    sh 'venv/bin/pip install --upgrade pip'
+                    sh 'venv/bin/pip install -r requirements.txt'
                     
                     echo "--- Running Unit Tests with Coverage ---"
-                    // Generates coverage.xml
-                    sh 'pytest --cov=app --cov-report=xml test_app.py'
+                    // 3. Run pytest using the binary INSIDE the venv
+                    sh 'venv/bin/pytest --cov=app --cov-report=xml test_app.py'
                 }
             }
         }

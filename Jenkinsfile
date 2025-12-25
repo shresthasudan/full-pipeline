@@ -11,8 +11,8 @@ pipeline {
         // Configuration
         NEXUS_REGISTRY = "registry.nchldemo.com"
         NEXUS_CRED     = "nexus-auth"      // ID of Jenkins Credential
-        IMAGE_NAME     = "fintech-python-app" // Add your name here
-        CONTAINER_NAME = "fintech-prod-container" // Add your name here
+        IMAGE_NAME     = "fintech-python-app-gg" // Add your name here
+        CONTAINER_NAME = "fintech-prod-container-gg" // Add your name here
         
         // ZAP Configuration
         ZAP_PORT       = "9000" // Change the port
@@ -20,7 +20,7 @@ pipeline {
         // Map Cosign Credentials
         COSIGN_PASSWORD = credentials('cosign-private-key')
         SONAR_SERVER_NAME = "sonar-server-admin"
-        SONAR_PROJECT_KEY = "fintech-app-trainer" // Add your name here
+        SONAR_PROJECT_KEY = "fintech-app-trainer-gg" // Add your name here
     }
 
     stages {
